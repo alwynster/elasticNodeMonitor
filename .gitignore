@@ -1,0 +1,17 @@
+Debug/
+build/
+.settings
+.DS_Store
+*.bit
+*.pyc
+*.d
+*.o
+*.elf
+*.hex
+build/*
+Debug/*
+*.map
+*.sublime-workspace
+*.eep
+*.sym
+*.lss
