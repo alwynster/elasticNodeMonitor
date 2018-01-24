@@ -68,7 +68,7 @@ void currentSensePushMeasurements(uint8_t push) { pushMeasurements = push; }
 
 uint8_t currentSenseCount()
 {
-	 // return circBufCountCurrentMeasurement(&monitorBuf);
+	// return circBufCountCurrentMeasurement(&monitorBuf);
 	return 0;
 }
 
@@ -623,13 +623,6 @@ uint16_t readCurrentSense(uint8_t address, uint8_t channel)
 	// check for disconnected
 	if (sense == 0xFF8)
 		return -1;
-	// negative
-	else if (sense >> 11)
-	{	
-		// pad value to 16 bit
-		sense = sense | (0xf << 12);
-		return -((int16_t) sense);
-	}
 	else
 		return sense;
 }
@@ -691,6 +684,15 @@ float currentSenseConvert(uint8_t device, uint16_t sense)
 		return -1;
 	else
 	{
+		// negative
+		if (sense >> 11)
+		{	
+			// pad value to 16 bit
+			sense = sense | (0xf << 12);
+			sense = -((int16_t) sense);
+		}
+
+		
 		// FSC = FSR/Rsense = 0.08/Rsense = 0.1
 		// I = FSC * Vsense/Den= 0.1 * sense / 2047
 		float R = getR(device);

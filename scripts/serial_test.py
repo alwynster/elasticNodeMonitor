@@ -10,7 +10,7 @@ import numpy as np
 import warnings 
 import threading
 
-# from serial_plotter import SerialPlotter
+from serial_plotter import SerialPlotter
 
 import sched
 
@@ -23,7 +23,7 @@ CURRENT_BUFFER_SIZE = 20
 
 serial_template = "/dev/tty.usbserial-AL34*"
 
-# plot = False
+plot = True
 
 class SerialTest:
 	ser = None
@@ -38,8 +38,8 @@ class SerialTest:
 	def __init__(this):
 
 		try:
-			# if plot:
-			# 	this.plotter = SerialPlotter()
+			if plot:
+				this.plotter = SerialPlotter()
 
 			try:
 				this.baud = int(sys.argv[2]) 
@@ -144,19 +144,26 @@ class SerialTest:
 		# backup current busy state
 		bk = this.busy
 		this.busy = True
+		success = False
 		#  this.ser.reset_input_buffer();
 		# print 'sending command', command
 		for i in range(5):
-			this.ser.timeout = 0.1
-			this.ser.write(command)
-			if this.confirmCommand(command):
-				break
-			else:
-				print 'repeating command...', command
+			try:
+				this.ser.timeout = 0.1
+				this.ser.write(command)
+				if this.confirmCommand(command):
+					success = True
+					break
+				else:
+					print 'repeating command...', command
+			except IOError:
+				print 'Device error...'
 
 		this.ser.timeout = None
 
 		this.busy = bk
+
+		return success
 		# print 'command successful'
 
 	def confirmCommand(this, command):
@@ -217,19 +224,19 @@ class SerialTest:
 
 	# fetch all available
 	def fetchAllCurrent(this):
-		this.writeCommand(b'f')
-		
-		rec = this.ser.read(1)
-		numResults = ord(rec)
-		# if numResults > 0:
-		print 'numResults:', numResults
-		if numResults > CURRENT_BUFFER_SIZE:
-			print 'unrealistic number of results...'
-			this.ser.timeout = 0.5
-			this.ser.read(numResults);
-			return list()
-		else:
-			return this.fetchNumCurrents(numResults)
+		if this.writeCommand(b'f'):
+			
+			rec = this.ser.read(1)
+			numResults = ord(rec)
+			# if numResults > 0:
+			print 'numResults:', numResults
+			if numResults > CURRENT_BUFFER_SIZE:
+				print 'unrealistic number of results...'
+				this.ser.timeout = 0.5
+				this.ser.read(numResults);
+				return list()
+			else:
+				return this.fetchNumCurrents(numResults)
 
 	def printMeasurement(this, measurement):
 		print 'printing measurement'

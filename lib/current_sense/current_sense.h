@@ -15,7 +15,7 @@
 #include <compat/twi.h>
 
 // counter for monitoring task
-#define CURRENT_SENSE_F 1
+#define CURRENT_SENSE_F 5
 #define CURRENT_SENSE_OCR (F_CPU / 1024 / CURRENT_SENSE_F - 1)
 
 #define MEASUREMENT_BUFFER_SIZE 20

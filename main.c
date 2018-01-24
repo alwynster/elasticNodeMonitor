@@ -107,6 +107,7 @@ int main(void)
         	else if(data2 == 'M')
         	{
 				debugWriteChar(data2);
+				currentSenseClearMeasurements();
 				currentSenseBegin();
         	} 
         	else if(data2 == 'm')
