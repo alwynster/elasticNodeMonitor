@@ -15,10 +15,10 @@
 #include <compat/twi.h>
 
 // counter for monitoring task
-#define CURRENT_SENSE_F 5
+#define CURRENT_SENSE_F 12
 #define CURRENT_SENSE_OCR (F_CPU / 1024 / CURRENT_SENSE_F - 1)
 
-#define MEASUREMENT_BUFFER_SIZE 20
+#define MEASUREMENT_BUFFER_SIZE 25
 // #if CURRENT_SENSE_OCR > 0xffff
 // 	#warning "OCR is too large"
 // #endif
@@ -73,7 +73,12 @@
 #define DEN 2047.0f
 // nothing, sampling x3, average x2, range x2
 // #define CURRENT_CONFIG 0b01101011
-#define CURRENT_CONFIG 0b01011111
+#define CURRENT_RATE_CONFIG 0b11 		// Continuous conversion
+#define CURRENT_AVERAGING_CONFIG 0b00 	// No averaging
+#define CURRENT_SAMPLING_CONFIG 0b101 	// Most accurate measurements 80ms
+#define CURRENT_RANGE_CONFIG 0b11 		// Full swing +-80mV
+#define CURRENT_CONFIG ((CURRENT_SAMPLING_CONFIG << 5) | (CURRENT_AVERAGING_CONFIG << 2) | (CURRENT_RANGE_CONFIG))
+// #define CURRENT_CONFIG 0b01011111
 // #define CURRENT_ADDRESS_A 0b00101001 // CHANNEL 1 nothing CHANNEL 2 MCU
 
 // FSC = FSR/Rsense = 0.08/Rsense = 0.1

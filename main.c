@@ -95,6 +95,10 @@ int main(void)
         		debugWriteChar(data2);
         		monitoring = 1;
 
+        		debugWriteString("Config: ");
+        		debugWriteBin8(CURRENT_CONFIG);
+        		debugNewLine();
+
 				printCurrent(CURRENT_USB);
 				printCurrent(CURRENT_MONITOR);
 				printCurrent(CURRENT_WIRELESS);

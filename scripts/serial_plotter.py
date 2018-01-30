@@ -3,7 +3,8 @@ import time
 import warnings 
 import numpy as np
 
-LIMIT = 50
+LIMIT = 200
+HIDE_TOTAL = True
 
 class SerialPlotter:
 	graphdata = [list() for i in range(6)]
@@ -68,7 +69,8 @@ class SerialPlotter:
 
 		for i in range(6):
 			if not (this.hide_wireless and i == 1):
-				pp.plot(this.xs, this.graphdata[i], this.styles[i])
+				if not (HIDE_TOTAL and i == 0):
+					pp.plot(this.xs, this.graphdata[i], this.styles[i])
 
 		minx = np.min(this.xs)
 		maxx = np.max(this.xs)
@@ -78,7 +80,10 @@ class SerialPlotter:
 		if this.hide_wireless:
 			pp.legend(['Total', 'MCU', 'FPGA'], loc='center right')
 		else:
-			pp.legend(['Total', 'Monitor', 'Wireless', 'MCU', 'FPGA AUX', 'FPGA INT'], loc='center right')
+			legend = ['Total', 'Monitor', 'Wireless', 'MCU', 'FPGA AUX', 'FPGA INT']
+			if HIDE_TOTAL: legend = legend[1:]
+			pp.legend(legend, loc='upper left')
+
 
 		pp.pause(timeout)
 
@@ -86,8 +91,8 @@ if __name__ == "__main__":
 	print 'test SerialPlotter'
 	plotter = SerialPlotter()
 
-	datapoint = [0,0,0,0]
-	for i in range(20):
+	datapoint = np.zeros((len(plotter.styles)))
+	for i in range(20000):
 		datapoint[0] = i
 		plotter.plot(datapoint)
 		plotter.redraw()

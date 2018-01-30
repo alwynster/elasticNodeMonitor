@@ -270,15 +270,15 @@ flash_isp: $(TARGET).hex
 # # clear_eeprom_save_fuse: FUSE_STRING = -U hfuse:w:$(HFUSE):m
 # # clear_eeprom_save_fuse: fuses
 
-# reset:
-# 	$(AVRDUDE) -c $(PROGRAMMER_TYPE_STK) -p $(MCU) $(PROGRAMMER_ARGS_STK) -n
+reset:
+	$(AVRDUDE) -c $(PROGRAMMER_TYPE_ISP) -p $(MCU) -n
 
 
 debug:
 	@echo "Debug"
 	python scripts/serial_echo.py $(ELASTIC_NODE_MONITOR_SERIAL) $(BAUD) 
 
-monitor:
+monitor: killall
 	@echo "Monitor"
 	python scripts/serial_test.py $(ELASTIC_NODE_MONITOR_SERIAL) $(BAUD) startmonitor
 
@@ -298,7 +298,13 @@ monitor:
 # # 	# @echo caught target $@
 # # 	python scripts/serial_test.py ann
 
+screen:
+	screen $(ELASTIC_NODE_MONITOR_SERIAL) $(BAUD)
+
+killall:
+	-killall python
+
 # send any other targets to the python script
-.DEFAULT:
+current:
 	# @echo caught target $@
 	python scripts/serial_test.py  $(ELASTIC_NODE_MONITOR_SERIAL) $(BAUD) $@

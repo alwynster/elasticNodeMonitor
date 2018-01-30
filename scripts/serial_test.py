@@ -15,11 +15,14 @@ from serial_plotter import SerialPlotter
 import sched
 
 PLOT_DELAY = 0.5
+QUERY_DELAY = 0.25
 
 TIME_TOTAL = 1
-baudrate = 500000
-CURRENT_MEASUREMENT_FLOAT = 4*6
-CURRENT_BUFFER_SIZE = 20
+baudrate = 115200
+ELEMENT_SIZE = 4
+CURRENT_MEASUREMENT_NUMBER = 6
+CURRENT_MEASUREMENT_FLOAT = ELEMENT_SIZE*CURRENT_MEASUREMENT_NUMBER
+CURRENT_BUFFER_SIZE = 50
 
 serial_template = "/dev/tty.usbserial-AL34*"
 
@@ -33,13 +36,13 @@ class SerialTest:
 	debug = True
 	# selectmap = /False
 	busy = False # dont request current because interface in use
+	fetching = False
 
 	baud, port = None, None
 	def __init__(this):
 
 		try:
-			if plot:
-				this.plotter = SerialPlotter()
+			
 
 			try:
 				this.baud = int(sys.argv[2]) 
@@ -69,31 +72,46 @@ class SerialTest:
 			sys.exit(0)
 
 	def openSerial(this):
-		try:
-			print 'Opening serial...'
-			this.ser = serial.Serial(this.port, this.baud)
-			this.remainingMonitor = 0;
+		attempts = 0
+		notConnected = True
+		while notConnected and attempts < 10:
+			try:
+				print 'Opening serial...'
+				this.ser = serial.Serial(this.port, this.baud)
 
-			# this.ser.read(this.ser.inWaiting())
-			this.ser.reset_input_buffer();
+				this.ser.timeout = 0.1
 
-			response = '0'
-			this.ser.timeout = 0.5#  * 10
-			request = '0'
-			
-			# read any old data
-			this.ser.read(1000) # this will always cause a timeout delay
+				this.remainingMonitor = 0;
+
+				# this.ser.read(this.ser.inWaiting())
+				this.ser.reset_input_buffer();
+
+				response = '0'
+				this.updateTimeout(0.5)
+				# this.ser.timeout = 0.5#  * 10
+				request = '0'
+				
+				# read any old data
+				this.ser.read(1000) # this will always cause a timeout delay
 
 
-			this.ser.timeout = 2.5#  * 10
-			
-			this.ser.reset_input_buffer();
-			this.ser.timeout = None
+				this.updateTimeout(2.5)
+				# this.ser.timeout = 2.5#  * 10
+				
+				this.ser.reset_input_buffer();
+				# this.ser.timeout = None
+				this.updateTimeout(None)
 
-			print 'Serial available'
-		except KeyboardInterrupt:
-			print 'Interrupted initialisation'
-			sys.exit(0)
+				notConnected = False
+
+				print 'Serial available'
+			except serial.SerialException:
+				print 'Port not available'
+				time.sleep(1)
+				attempts += 1
+			except KeyboardInterrupt:
+				print 'Interrupted initialisation'
+				sys.exit(0)
 
 	def receiveData(this):
 		t0 = time.time()
@@ -124,7 +142,7 @@ class SerialTest:
 
 		this.monitoring = True
 
-		threading.Thread(target=this.waitWhileMonitoring, args=[]).start()		
+		# threading.Thread(target=this.waitWhileMonitoring, args=[]).start()		
 		# this.remainingMonitor = length
 
 
@@ -149,7 +167,8 @@ class SerialTest:
 		# print 'sending command', command
 		for i in range(5):
 			try:
-				this.ser.timeout = 0.1
+				this.updateTimeout(0.1)
+				# this.ser.timeout = 0.1
 				this.ser.write(command)
 				if this.confirmCommand(command):
 					success = True
@@ -159,15 +178,16 @@ class SerialTest:
 			except IOError:
 				print 'Device error...'
 
-		this.ser.timeout = None
-
+		this.updateTimeout(None)
+		# this.ser.timeout = None
 		this.busy = bk
 
 		return success
 		# print 'command successful'
 
 	def confirmCommand(this, command):
-		this.ser.timeout = 0.5
+		this.updateTimeout(0.1)
+		# this.ser.timeout = 0.1
 		response = this.ser.read(1)
 		try:
 			command = ord(command)
@@ -196,12 +216,25 @@ class SerialTest:
 	def printCurrent(this):
 		this.writeCommand(b'C')
 
+		success = True
+		this.updateTimeout(0.5)
+		# this.ser.timeout = 0.5
+		while success:
+			read = this.ser.readline()
+			if read == '':
+				success = False
+			else:
+				print read,
+
+		this.updateTimeout(None)
+		# this.ser.timeout = None
+
 	def fetchCurrent(this):
 		# raise NotImplementedError("not implemented")
 		this.writeCommand(b'c')
 		
 		# fetch results
-		print 'fetching'
+		print 'reading data'
 		# print 'TODO: not implemented'
 		# for i in range(50):
 		floats = this.ser.read(CURRENT_MEASUREMENT_FLOAT)
@@ -211,32 +244,49 @@ class SerialTest:
 
 	# fetch as many as are presented
 	def fetchNumCurrents(this, number):
-		
-		this.ser.timeout = 1.0
+		this.updateTimeout(.1)
+		# this.ser.timeout = .1
 
 		results = list()
 		# fetch results
+		floats = this.ser.read(CURRENT_MEASUREMENT_FLOAT * number)
+		floats = np.frombuffer(floats, dtype=np.float32)
+
 		for i in range(number):
-			floats = this.ser.read(CURRENT_MEASUREMENT_FLOAT)
-			results.append(np.frombuffer(floats, dtype=np.float32))
+			results.append(floats[(i*CURRENT_MEASUREMENT_NUMBER):((i+1)*CURRENT_MEASUREMENT_NUMBER)])
 
 		return results
 
+	def busyFetching(this):
+		return this.fetching
+
+	totalReceived = 0
 	# fetch all available
 	def fetchAllCurrent(this):
+		this.fetching = True
 		if this.writeCommand(b'f'):
-			
 			rec = this.ser.read(1)
 			numResults = ord(rec)
 			# if numResults > 0:
 			print 'numResults:', numResults
+			this.totalReceived += numResults
+			print 'Total:', this.totalReceived
+			results = None
 			if numResults > CURRENT_BUFFER_SIZE:
 				print 'unrealistic number of results...'
-				this.ser.timeout = 0.5
+				this.updateTimeout(0.5)
+				# this.ser.timeout = 0.5
 				this.ser.read(numResults);
-				return list()
+				results = list()
 			else:
-				return this.fetchNumCurrents(numResults)
+				results = this.fetchNumCurrents(numResults)
+
+			this.fetching = False
+			return results;
+		else:
+			print 'could not write command'
+
+		this.fetching = False
 
 	def printMeasurement(this, measurement):
 		print 'printing measurement'
@@ -250,19 +300,23 @@ class SerialTest:
 	def waitWhileMonitoring(this):
 
 		print 'ready to receive measurements...'
+		if plot:
+			this.plotter = SerialPlotter()
 
-		this.ser.timeout = 0.5
+		this.updateTimeout(0.5)
+		# this.ser.timeout = 0.5
 		if this.monitoring:
 			try:
 				time.sleep(1)
 				while this.monitoring:
 					if not this.busy:
 						this.plotAll()
-					time.sleep(1)
+					time.sleep(QUERY_DELAY)
 
 			except KeyboardInterrupt:
 				print 'done'
-				this.ser.timeout = 0.5
+				this.updateTimeout(.5)
+				# this.ser.timeout = 0.5
 
 				# try:
 				# 	this.endMonitor()
@@ -283,6 +337,8 @@ class SerialTest:
 
 		results = this.fetchAllCurrent()
 		
+		if results == None: return
+
 		for res in results:
 			if plot:
 				with warnings.catch_warnings():
@@ -306,10 +362,18 @@ class SerialTest:
 
 		# 	sys.exit(0)
 
+		this.redraw()
+
+		this.ser.reset_input_buffer()
+		this.ser.reset_output_buffer()
+
 	def redraw(this):
 		if plot:
 			this.plotter.redraw()
 
+	def updateTimeout(this, timeout):
+		# this.ser.timeout = timeout
+		pass
 
 if __name__ == '__main__':
 
@@ -352,6 +416,7 @@ if __name__ == '__main__':
 				serialTest.printAllMeasurements();
 			elif target == "startmonitor":
 				serialTest.startMonitor()
+				serialTest.waitWhileMonitoring();
 			elif target == "endmonitor":
 				serialTest.endMonitor()
 			elif target == "wait":
@@ -368,15 +433,16 @@ if __name__ == '__main__':
 				print "Target", target, "not defined"
 	
 
-	while serialTest.monitoring:
-		try:
-			time.sleep(0.1)
-			serialTest.redraw()
-		except ValueError:
-			print 'No data to plot'
-		except KeyboardInterrupt:
-			serialTest.monitoring = False
-			# serialTest.endMonitor()
+	# while serialTest.monitoring:
+	# 	try:
+	# 		time.sleep(PLOT_DELAY)
+	# 		# if not serialTest.busyFetching():
+	# 		# 	serialTest.redraw()
+	# 	except ValueError:
+	# 		print 'No data to plot'
+	# 	except KeyboardInterrupt:
+	# 		serialTest.monitoring = False
+	# 		# serialTest.endMonitor()
 
 	serialTest.ser.close();
 

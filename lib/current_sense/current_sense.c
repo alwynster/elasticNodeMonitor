@@ -173,7 +173,7 @@ uint8_t currentSenseTask(void)
 		{
 			// setLed(2,1);
 
-			debugWriteLine("No space for measurement");
+			// debugWriteLine("No space for measurement");
 		}
 
 		currentSenseFlag = 0x00;
