@@ -3,8 +3,9 @@ import time
 import warnings 
 import numpy as np
 
-LIMIT = 200
+LIMIT = 500
 HIDE_TOTAL = True
+CURRENT_SENSE_F = 12.
 
 class SerialPlotter:
 	graphdata = [list() for i in range(6)]
@@ -12,6 +13,7 @@ class SerialPlotter:
 	latestX = 0
 	updating = False
 	title = "Elastic Node"
+	maxy = 0
 
 	styles = ['r', 'b', 'g', 'm', 'k', 'c']
 
@@ -20,6 +22,7 @@ class SerialPlotter:
 	def __init__(this):
 		pp.figure()
 		this.drawExtras()
+		this.maxy = 0
 
 	def drawExtras(this):
 		pp.ion()
@@ -70,12 +73,16 @@ class SerialPlotter:
 		for i in range(6):
 			if not (this.hide_wireless and i == 1):
 				if not (HIDE_TOTAL and i == 0):
-					pp.plot(this.xs, this.graphdata[i], this.styles[i])
+					pp.plot(np.array(this.xs) / CURRENT_SENSE_F, this.graphdata[i], this.styles[i])
+					this.maxy = np.max([this.maxy, np.max(this.graphdata[i])])
 
-		minx = np.min(this.xs)
-		maxx = np.max(this.xs)
+
+		minx = np.min(this.xs) / CURRENT_SENSE_F
+		maxx = np.max(this.xs) / CURRENT_SENSE_F
 		if minx != maxx:
 			pp.xlim([minx, maxx])
+		if this.maxy != 0:
+			pp.ylim([0, this.maxy * 1.1])
 
 		if this.hide_wireless:
 			pp.legend(['Total', 'MCU', 'FPGA'], loc='center right')
