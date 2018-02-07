@@ -92,13 +92,11 @@ uint8_t currentSenseCount(void);
 void currentSenseBegin(void);
 void currentSenseEnd(void);
 uint8_t currentSenseTask(void);
-uint8_t popCurrentMeasurement(currentMeasurementFloat *measurement);
 
 void currentSenseClearMeasurements(void);
 
 void printCurrentProductId(uint8_t address);
 float currentSenseConvert(uint8_t device, uint16_t sense);
-void currentMeasurementConvert(currentMeasurement *measurement, currentMeasurementFloat *converted);
 void printCurrent(uint8_t device);
 // extern union TWI_statusReg_f TWI_statusReg;
 
@@ -109,8 +107,6 @@ uint16_t readCurrentSenseBlocking(uint8_t address, uint8_t channel);
 void printCurrentSense(uint8_t address, uint8_t channel);
 
 float fetchCurrent(uint8_t device);
-void printCurrentMeasurement(currentMeasurement c);
-void printAllCurrentMeasurementsFloat(void);
 
 void currentSenseStartAll(void);
 

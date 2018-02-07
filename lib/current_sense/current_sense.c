@@ -72,59 +72,9 @@ uint8_t currentSenseCount()
 	return 0;
 }
 
-uint8_t popCurrentMeasurement(currentMeasurementFloat *measurement)
-{
-	uint8_t *destPtr = (uint8_t *) measurement->measurements;
-
-	// uint8_t gi = interruptStatus();
-	
-	// if (gi)
-		cli();
-
-	// pop enough bytes out of the circular buffer
-	for(int s = 0; s < sizeof(currentMeasurementFloat); s++)
-	{
-		// pop out one byte and increase pointer 
-		if (!circBufPop(&monitorBuf, destPtr++))
-		{
-			// debugWriteLine("cannot pop measurement");
-			// if (gi)
-				sei();
-
-			return 0;
-		}
-	}
-
-	// debugWriteLine("popped measurement");
-	// if (gi) 
-		sei();
-
-	// if end is reached then it's fine
-	return 1;
-}
-
-currentMeasurementFloat measurementFloat;
-uint8_t pushCurrentMeasurement(currentMeasurement *measurement)
-{
-	// convert to floats 
-	currentMeasurementConvert(measurement, &measurementFloat);
-	uint8_t *destPtr = (uint8_t *) measurementFloat.measurements;
-
-	// pop enough bytes out of the circular buffer
-	for(int s = 0; s < sizeof(currentMeasurementFloat); s++)
-	{
-		// push one byte at a time
-
-		circBufPush(&monitorBuf, *destPtr++);
-	}
-
-	// if end is reached then it's fine
-	return 1;
-}
-
 void currentSenseClearMeasurements()
 {
-	while (popCurrentMeasurement(&measurementFloat)) { }
+	while (popCurrentMeasurement(&monitorBuf, &measurementFloat)) { }
 }
 
 
@@ -519,7 +469,7 @@ ISR(TWI_vect)
 							// setLed(2, 0); // done with measurement
 
 							i2c_disable();
-							pushCurrentMeasurement(&measurement);
+							pushCurrentMeasurement(&monitorBuf, &measurement);
 
 							if (pushMeasurements)
 								printAllCurrentMeasurementsFloat();
@@ -808,7 +758,7 @@ void printAllCurrentMeasurementsFloat()
 	{
 		for(int i = 0; i < responses; i ++)
 		{
-			if (popCurrentMeasurement(&measurementFloat))
+			if (popCurrentMeasurement(&monitorBuf, &measurementFloat))
 			{
 				// debugWriteString("**");
 				debugWriteStringLength((char *) measurementFloat.measurements, sizeof(measurementFloat));

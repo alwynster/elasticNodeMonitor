@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include <circular_buffer/circular_buffer.h>
+#include <avr/interrupt.h>
 
 typedef union currentMeasurementTmp {
 	uint16_t measurements[6];
@@ -28,5 +29,10 @@ typedef union currentMeasurementFloatTmp {
 	} breakdown;
 } currentMeasurementFloat;
 
+uint8_t pushCurrentMeasurement(circularBuffer *buf, currentMeasurement *measurement);
+uint8_t popCurrentMeasurement(circularBuffer *buf, currentMeasurementFloat *measurement);
+void currentMeasurementConvert(currentMeasurement *measurement, currentMeasurementFloat *converted);
+void printCurrentMeasurement(currentMeasurement c);
+void printAllCurrentMeasurementsFloat(void);
 
 #endif
