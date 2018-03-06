@@ -1,0 +1,21 @@
+combine fpga, mcu, wireless
+remove monitoring graph
+axes labels
+latency: two graphs (lines) on right hand image
+convert all to power
+right hand: energy usage per batch, latency per batch
+
+
+fpga combine aux and internal
+change latency to throughput graph
+change experiment to be more one for x seconds, other for x seconds
+energy usage also per query
+ability to add hardware acceleration, while still remaining flexible as software would be, if your application requires high performance then this provides an alternative to offloading that performance. 
+balance between flexibility, energy usage, and high performance. why elastic node? provide this balance using reconfigurable hardware.
+poster: reconfigurable hardware, fpga, balance from elastic node, lookup table from acceleration. 
+hardware acceleration as being changing physical structure, rather than virtual machines, simulated processors, 
+system schematic figure showing system architecture, not with mw or other hardware components, if space then hardware overview of elastic node.
+slide: high level explanation of problem that we're solving. comparison numbers. 
+graphs on the poster, not on slide.
+
+slide talk/slide: dont do it in cloud, do it local faster, dont do it in sw do it hardware accelerated, if you worried about flexibility theres a solution. if you have questions we will show you how to accelerate your application see my demo
