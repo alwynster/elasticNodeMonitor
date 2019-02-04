@@ -43,12 +43,13 @@ BAUD = 500000UL
 
 PROGRAMMER_TYPE_ISP = avrisp2
 PROGRAMMER_TYPE_STK = stk500v2
-PROGRAMMER_ARGS_STK = -P $(wildcard /dev/tty.usbmodem*)
-# PROGRAMMER_ARGS_STK = -P /dev/tty.usbmodem323131
+# PROGRAMMER_ARGS_STK = -P $(wildcard /dev/tty.usbmodem*)
+PROGRAMMER_ARGS_STK = -P /dev/tty.usbmodem1401
 
 ELASTIC_NODE_SERIAL = $(wildcard /dev/tty.usbserial-*)
-ELASTIC_NODE_MONITOR_SERIAL = /dev/tty.usbmodem13121
+ELASTIC_NODE_MONITOR_SERIAL = /dev/tty.usbmodem1301
 #/dev/tty.usbserial-AL00EXCB 
+#ELASTIC_NODE_MONITOR_SERIAL = $(wildcard /dev/tty.usbserial-*)
 # ELASTIC_NODE_DEBUG_SERIAL = /dev/tty.usbserial-AI02KF0V
 # extra arguments to avrdude: baud rate, chip type, -F flag, etc.
 
@@ -201,8 +202,8 @@ include $(LUFA_PATH)/Build/lufa_atprogram.mk
 flash_isp: $(TARGET).hex
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE_ISP) -p $(MCU) -V -s -U flash:w:$<
 
-# flash_stk: $(TARGET).hex
-# 	$(AVRDUDE) -c $(PROGRAMMER_TYPE_STK) -p $(MCU) -V $(PROGRAMMER_ARGS_STK) -U flash:w:$<
+flash_stk: $(TARGET).hex
+	$(AVRDUDE) -c $(PROGRAMMER_TYPE_STK) -p $(MCU) -V $(PROGRAMMER_ARGS_STK) -U flash:w:$<
 
 # ## An alias
 # program: flash
@@ -273,9 +274,13 @@ flash_isp: $(TARGET).hex
 reset:
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE_ISP) -p $(MCU) -n
 
+reset_stk:
+	$(AVRDUDE) -c $(PROGRAMMER_TYPE_STK) -V $(PROGRAMMER_ARGS_STK)  -p $(MCU) -n
+
 
 debug:
 	@echo "Debug"
+	@echo $(ELASTIC_NODE_MONITOR_SERIAL)
 	python scripts/serial_echo.py $(ELASTIC_NODE_MONITOR_SERIAL) $(BAUD) 
 
 monitor: killall

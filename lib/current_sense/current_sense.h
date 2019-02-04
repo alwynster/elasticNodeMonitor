@@ -95,6 +95,7 @@ uint8_t currentSenseTask(void);
 
 void currentSenseClearMeasurements(void);
 
+void printAccID(void);
 void printCurrentProductId(uint8_t address);
 float currentSenseConvert(uint8_t device, uint16_t sense);
 void printCurrent(uint8_t device);

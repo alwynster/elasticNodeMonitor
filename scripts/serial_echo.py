@@ -14,14 +14,22 @@ ser = serial.Serial(sys.argv[1], baud)
 
 quit = False
 
+ser.write("W")
+while ser.in_waiting > 0:
+	# print ser.in_waiting
+	print ser.readline(), # bt = ser.read(1)[0]		while True:
+
 while not quit:
 	try:
-		while True:
-			ser.write("M")
-			while ser.in_waiting > 0:
-				# print ser.in_waiting
-				print ser.readline(), # bt = ser.read(1)[0]
-			time.sleep(2)
+		ser.write("a")
+		ser.read(1) # echo
+		# while ser.in_waiting > 0:
+			# print ser.in_waiting
+		print ser.readline(), # bt = ser.read(1)[0]		while True:
+
+
+
+		# time.sleep(.2)
 			# print bt
 			# print format(ord(bt), "02x")
 		# print bt

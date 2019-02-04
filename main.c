@@ -83,6 +83,10 @@ int main(void)
 	monitoring = 0;
 	initCurrentSense();
 
+	// _delay_ms
+	// findCurrentSensors();
+
+
 	/* Endless loop */
 	for(;;)
 	{
@@ -108,6 +112,11 @@ int main(void)
 
 				debugNewLine();
         	}
+        	else if(data2 == 'F')
+        	{
+				debugWriteChar(data2);
+       			findCurrentSensors();
+        	}
         	else if(data2 == 'M')
         	{
 				debugWriteChar(data2);
@@ -123,6 +132,16 @@ int main(void)
         	{
         		debugWriteChar(data2);
         		printAllCurrentMeasurementsFloat();
+        	}
+        	else if(data2 == 'a')
+        	{
+        		debugWriteChar(data2);
+        		printAccelerometerValues();
+        	}
+        	else if(data2 == 'W')
+        	{
+        		debugWriteChar(data2);
+        		printAccID();	
         	}
    //      	CDC_Device_SendByte(&VirtualSerial_CDC_Interface,(uint8_t)data1);
 			// CDC_Device_SendString(&VirtualSerial_CDC_Interface," @\r\n");

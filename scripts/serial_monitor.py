@@ -24,9 +24,9 @@ CURRENT_MEASUREMENT_NUMBER = 6
 CURRENT_MEASUREMENT_FLOAT = ELEMENT_SIZE*CURRENT_MEASUREMENT_NUMBER
 CURRENT_BUFFER_SIZE = 50
 
-serial_template = "/dev/tty.usbserial-AL34*"
+serial_template = "/dev/tty.usbmodem21101" #usbserial-AL34*"
 
-plot = True
+plot = False
 
 class SerialTest:
 	ser = None

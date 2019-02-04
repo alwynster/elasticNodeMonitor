@@ -19,3 +19,38 @@ slide: high level explanation of problem that we're solving. comparison numbers.
 graphs on the poster, not on slide.
 
 slide talk/slide: dont do it in cloud, do it local faster, dont do it in sw do it hardware accelerated, if you worried about flexibility theres a solution. if you have questions we will show you how to accelerate your application see my demo
+
+
+poster notes:
+
+collected data arrow thinner, showing comparison with original arrows clearer
+fpga pic: add statistics of how many of each we have today
+flexibility: timeline of configurations over time? possibly with colour coded timeline for what is active when
+perhaps picture of chip in hw slide
+text under hw slide should include concept of reconfigurability (chip that can switch between hardware functions at runtime)
+new el slide: text explains what mcu does, when it's nice to use
+last slide: bring in concept of flexibility, different application, application change, (talk about investigating how to use that reconf to optimise the other things)
+weird lifetime cycle thing: always changing application/requirements, changing hwf on fpga, elastic node changes with you
+
+
+poster talk notes:
+
+remove fpga usage from energy consumption per run
+test fpga suspend
+move legend on throughput 
+
+We are demoing our hw platform  the elastic node and showing how it can be used for applications like deep learning. These applications generally collect data using tiny energy constrained nodes and then send all of this data to the cloud where it is processed. The goal of our hardware platform is to provide an alternative to this where more of the processing is done locally on the device, while staying under these same energy constraints. We also want to remove some of the dependency on the connection to the cloud, to ensure that we can stay operational even if the cloud computing cannot be reached.  
+
+To provide the greater processing power required on the device we include an FGPA on our node, which can create a custom hardware solution that is highly optimised for solving a specific task. It does this by combining a large number of tiny components such as LUTs and DSP elements capable of doing basic mathematical operations. These hardware functions that it creates can also be swapped for other ones at runtime, allowing us to use the same physical hardware for a number of different applications. 
+
+Since FPGAs have higher power consumption than the low power MCUs that are normally used, we also include one of those on the board for when we just have to perform a simpler task such as data collection. 
+
+Our demo today is focussed on comparing the throughput between these two solutions, by directly comparing how quickly we can run ANN training runs locally on our EN to how quickly we can offload it to the laptop using the sort of low energy wireless communication commonly found on these sensor nodes. To compare these easier we run both of these options for around 10 seconds each, and then plot the average throughput achieved. As you can see here the local version can do more than 100x more training runs.
+
+Since we said earlier that we want to stay within the energy constraints of a small battery-powered node, we are also monitoring the power consumption of all the components on this board. We can quickly see that the MCU uses by far the least energy amongst them, only really increasing noticeably when we flash the LEDs to indicate the beginning and ending of an experiment. 
+
+The two more expensive components are the FPGA in black and the wireless in green, which consume similar amounts of power while being active. It's worth noticing that the inactive power of the FPGA stays slightly higher than that of the wireless chip, since the hardware function stays active while waiting for the next time it is required. 
+
+However, since the throughput of the local solution is so much higher than the offloading one, we can see that the energy consumption of local option is still less than for offloading. Even when we ignore the inactive power of the FPGA during offloading, offloading still requires in the order of 100x more energy per training run than the local version. 
+
+So as you can see we can actually calculate the ANN training runs way faster on the local device than we can offload it, while staying within the same energy domain. The next step for us is going to be optimising the FPGA inactive power consumption more, and we're trying to get feedback from partners in different application areas like machine learning, to see how we can use all of this for their applications. We are specifically interested in what specifications they are most interested in, whether they need loads of ann runs, very wide networks, fast response times or whatever else. 

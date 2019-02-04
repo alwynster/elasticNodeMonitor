@@ -45,8 +45,8 @@ void initCurrentSense(void)
 
     // debugWriteString("init twi\n");
 	i2c_init();
-	// findCurrentSensors();
-	currentSenseConfig();
+	i2c_enable();
+	// currentSenseConfig();
 
 	currentSenseFlag = 0x0;
 	measurementCounter = 0;
@@ -207,6 +207,113 @@ void currentSenseConfigDevice(uint8_t device)
 	i2c_stop();
 
 	sei();
+}
+
+uint8_t readRegister(uint8_t address)
+{
+	cli();
+
+	// product id: 0xFD
+	uint8_t address8 = 0b0101000 << 1;
+	uint8_t result;
+
+	result = i2c_start(address8);
+	if (result)
+	{
+		debugWriteString("couldn't start i2c");
+	}
+	else
+	{
+		result = i2c_write(address);
+		if (result)
+		{
+			debugWriteString("couldn't send register address");
+		}
+		else
+		{
+			result = i2c_rep_start(address8 | 1);
+			if (result)
+			{
+				debugWriteString("couldn't repeat start");
+			}
+			else
+			{
+				result = i2c_readNak();
+			}
+		}
+	}
+	i2c_stop();
+
+	sei();	
+
+	return result;
+}
+
+void writeRegister(uint8_t address, uint8_t value)
+{
+	cli();
+
+	uint8_t address8 = 0b0101000 << 1;
+	uint8_t result;
+	uint8_t reg;
+
+	result = i2c_start(address8);
+	if (result)
+	{
+		debugWriteString("couldn't start i2c ");
+		// debugWriteBin8(address8);
+		debugNewLine();
+	}
+	else
+	{
+		result = i2c_write(address);
+		if (result)
+		{
+			debugWriteLine("couldn't send register address");
+		}
+		else
+		{
+			result = i2c_write(value);
+			if (result)
+			{
+				debugWriteLine("couldn't send register data");
+			}	
+		}
+	}
+	i2c_stop();
+
+	sei();
+}
+
+// print the product id for testing
+void printAccID(void)
+{
+	writeRegister(0x20, 7 + (2 << 4));
+	debugWriteString("Acc ID: ");
+
+	debugWriteHex8(readRegister(0x0f));
+	debugNewLine();
+}
+
+
+
+void printAccelerometerValues(void)
+{
+	int8_t x = readRegister(0x29), y = readRegister(0x2b), z = readRegister(0x2d);
+	debugWriteString("Acc Data: (");
+	debugWriteHex8(x);
+	debugWriteChar(' ');
+	debugWriteHex8(y);
+	debugWriteChar(' ');
+	debugWriteHex8(z);
+	debugWriteString(") ");
+	debugWriteFloat((float) x / 128.0f * 2.0f);
+	debugWriteChar(' ');
+	debugWriteFloat((float) y / 128.0f * 2.0f);
+	debugWriteChar(' ');
+	debugWriteFloat((float) z / 128.0f * 2.0f);
+	debugWriteChar(' ');
+	debugNewLine();
 }
 
 // print the product id for testing
@@ -667,8 +774,8 @@ void findCurrentSensors()
 	cli();
 
 	debugWriteString("Finding current sensors...\n");
-	uint8_t address_a = 0b01010000, address_b = 0b10010000;
-	uint8_t address;
+	uint8_t address_a = 0b0101000, address_b = 0b10010000; // 0b01010000
+	uint8_t address = 0b01010001;
 	// uint8_t read = 0x1;
 	uint8_t i = 0;
 	// uint8_t reg = 0xFD;
@@ -677,9 +784,10 @@ void findCurrentSensors()
 	// uint8_t state;
 
 	debugNewLine();
-	for (i = 0; i <= 7; i++)
-	{
-		address = address_a | (i << 1);
+	// for (i = 0; i <= 0xEF; i++)
+	// {
+		// address = address_a | (i << 1);
+		// address = i << 1;
 
 		// request data
 		// debugWriteLine("starting");
@@ -688,21 +796,23 @@ void findCurrentSensors()
 		i2c_stop();
 		// debugWriteLine("done");
 		if(!response_a)
+		{
 			debugWriteString("Found: ");
-		else
-			debugWriteString("Not found: ");
-		debugWriteBin8(address >> 1);
-		debugNewLine();
+		// else
+		// 	debugWriteString("Not found: ");
+			debugWriteBin8(address >> 1);
+			debugNewLine();
+		}
 
-		address = address_b | (i << 1);
-		response_b = i2c_start(address);
-		i2c_stop();
-		if(!response_b)
-			debugWriteString("Found: ");
-		else
-			debugWriteString("Not found: ");
-		debugWriteBin8(address >> 1);
-		debugNewLine();
+		// address = address_b | (i << 1);
+		// response_b = i2c_start(address);
+		// i2c_stop();
+		// if(!response_b)
+		// 	debugWriteString("Found: ");
+		// else
+		// 	debugWriteString("Not found: ");
+		// debugWriteBin8(address >> 1);
+		// debugNewLine();
 		// TWI_Start_Transceiver_With_Data(msg, 1);
 		// state = TWI_Get_State_Info();
 
@@ -722,7 +832,9 @@ void findCurrentSensors()
 		// debugWriteHex8(response);
 		// debugWriteString(" : ");
 		// debugWriteHex8(msg[1]);
-	}
+
+	// 	_delay_ms(1);
+	// }
 
 	debugNewLine();
 	debugNewLine();
