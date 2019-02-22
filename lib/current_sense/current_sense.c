@@ -9,13 +9,11 @@
 #include <debug/debug.h>
 
 void findCurrentSensors(void);
-uint8_t getAddress(uint8_t device);
 uint8_t getChannel(uint8_t device);
 float getR(uint8_t device);
 char *getName(uint8_t device);
 uint16_t readCurrentSense(uint8_t address, uint8_t channel);
 void printCurrentSense(uint8_t address, uint8_t channel);
-void currentSenseConfig(void);
 void currentSenseConfigDevice(uint8_t device);
 
 // CIRCBUF_DEF(monitorBuf, sizeof(currentMeasurement) * MEASUREMENT_BUFFER_SIZE + 1);
@@ -46,7 +44,7 @@ void initCurrentSense(void)
     // debugWriteString("init twi\n");
 	i2c_init();
 	i2c_enable();
-	// currentSenseConfig();
+	currentSenseConfig();
 
 	currentSenseFlag = 0x0;
 	measurementCounter = 0;
@@ -249,11 +247,11 @@ uint8_t readRegister(uint8_t address)
 	return result;
 }
 
-void writeRegister(uint8_t address, uint8_t value)
+void writeRegister(uint8_t address, uint8_t register_address, uint8_t value)
 {
 	cli();
 
-	uint8_t address8 = 0b0101000 << 1;
+	uint8_t address8 = address << 1;
 	uint8_t result;
 	uint8_t reg;
 
@@ -266,7 +264,7 @@ void writeRegister(uint8_t address, uint8_t value)
 	}
 	else
 	{
-		result = i2c_write(address);
+		result = i2c_write(register_address);
 		if (result)
 		{
 			debugWriteLine("couldn't send register address");
@@ -288,7 +286,7 @@ void writeRegister(uint8_t address, uint8_t value)
 // print the product id for testing
 void printAccID(void)
 {
-	writeRegister(0x20, 7 + (2 << 4));
+	writeRegister(0b0101000, 0x20, 7 + (2 << 4));
 	debugWriteString("Acc ID: ");
 
 	debugWriteHex8(readRegister(0x0f));
@@ -454,23 +452,23 @@ ISR(TWI_vect)
 					{
 						// USB H
 						case 0:
-							measurement.breakdown.usb = data << 4;
+							measurement.breakdown.usb = data << SENSE_SHIFT_UP;
 							i2c_readAck_nonblocking();
 							break;
 						// USB L
 						case 1:
-							measurement.breakdown.usb |= data >> 4;
+							measurement.breakdown.usb |= data >> SENSE_SHIFT_DOWN;
 							i2c_readAck_nonblocking();
 							currentDevice = CURRENT_MONITOR;
 							break;
 						// MONITOR H
 						case 2:
-							measurement.breakdown.monitor = data << 4;
+							measurement.breakdown.monitor = data << SENSE_SHIFT_UP;
 							i2c_readNak_nonblocking();
 							break;
 						// MONITOR L
 						case 3:
-							measurement.breakdown.monitor |= data >> 4;
+							measurement.breakdown.monitor |= data >> SENSE_SHIFT_DOWN;
 							i2c_stop();
 
 							// start next immediately
@@ -495,23 +493,23 @@ ISR(TWI_vect)
 					{
 						// WIRELESS H
 						case 0:
-							measurement.breakdown.wireless = data << 4;
+							measurement.breakdown.wireless = data << SENSE_SHIFT_UP;
 							i2c_readAck_nonblocking();
 							break;
 						// WIRELESS L
 						case 1:
-							measurement.breakdown.wireless |= data >> 4;
+							measurement.breakdown.wireless |= data >> SENSE_SHIFT_DOWN;
 							i2c_readAck_nonblocking();
 							currentDevice = CURRENT_MCU;
 							break;
 						// MCU H
 						case 2:
-							measurement.breakdown.mcu = data << 4;
+							measurement.breakdown.mcu = data << SENSE_SHIFT_UP;
 							i2c_readNak_nonblocking();
 							break;
 						// MCU L
 						case 3:
-							measurement.breakdown.mcu |= data >> 4;
+							measurement.breakdown.mcu |= data >> SENSE_SHIFT_DOWN;
 							i2c_stop();
 
 #ifdef v1board
@@ -548,23 +546,23 @@ ISR(TWI_vect)
 					{
 						// VCCAUX H
 						case 0:
-							measurement.breakdown.vccaux = data << 4;
+							measurement.breakdown.vccaux = data << SENSE_SHIFT_UP;
 							i2c_readAck_nonblocking();
 							break;
 						// VCCAUX L
 						case 1:
-							measurement.breakdown.vccaux |= data >> 4;
+							measurement.breakdown.vccaux |= data >> SENSE_SHIFT_DOWN;
 							i2c_readAck_nonblocking();
 							currentDevice = CURRENT_FPGA_VCCINT;
 							break;
 						// VCCINT H
 						case 2:
-							measurement.breakdown.vccint = data << 4;
+							measurement.breakdown.vccint = data << SENSE_SHIFT_UP;
 							i2c_readNak_nonblocking();
 							break;
 						// VCCINT L
 						case 3:
-							measurement.breakdown.vccint |= data >> 4;
+							measurement.breakdown.vccint |= data >> SENSE_SHIFT_DOWN;
 							i2c_stop();
 							
 							// debugWriteString("vccint ");
@@ -607,6 +605,7 @@ ISR(TWI_vect)
 	if (currentState == I2C_ERROR)
 	{
 		debugWriteLine("Error in I2C");
+		
 		i2c_stop();
 		currentState = I2C_IDLE;
 		// uartWriteLine("Error in I2C ");
@@ -667,9 +666,9 @@ uint16_t readCurrentSense(uint8_t address, uint8_t channel)
 				// result is in 15-4 of these two registers 
 				result = i2c_readAck();
 				sense = result;
-				sense <<= 4;
+				sense <<= SENSE_SHIFT_UP;
 				result = i2c_readNak();
-				sense |= result >> 4;
+				sense |= result >> SENSE_SHIFT_DOWN;
 			}
 		}
 	}
@@ -742,10 +741,10 @@ float currentSenseConvert(uint8_t device, uint16_t sense)
 	else
 	{
 		// negative
-		if (sense >> 11)
+		if (sense >> (SENSE_BITS - 1))
 		{	
 			// pad value to 16 bit
-			sense = sense | (0xf << 12);
+			sense = sense | (0xffff << SENSE_BITS);
 			sense = -((int16_t) sense);
 		}
 

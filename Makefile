@@ -43,8 +43,8 @@ BAUD = 500000UL
 
 PROGRAMMER_TYPE_ISP = avrisp2
 PROGRAMMER_TYPE_STK = stk500v2
-# PROGRAMMER_ARGS_STK = -P $(wildcard /dev/tty.usbmodem*)
-PROGRAMMER_ARGS_STK = -P /dev/tty.usbmodem1401
+PROGRAMMER_ARGS_STK = -P $(wildcard /dev/tty.usbmodem*201)
+# PROGRAMMER_ARGS_STK = -P /dev/tty.usbmodem1401
 
 ELASTIC_NODE_SERIAL = $(wildcard /dev/tty.usbserial-*)
 ELASTIC_NODE_MONITOR_SERIAL = /dev/tty.usbmodem1301

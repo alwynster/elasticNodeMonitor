@@ -19,6 +19,8 @@
 #include "main.h"
 #include "lib/current_sense/current_sense.h"
 #include <debug/debug.h>
+#include <avr/sleep.h>
+#include <avr/io.h>
 
 int16_t received;
 uint8_t command, channel, data2;
@@ -70,7 +72,7 @@ int main(void)
 
 	// _delay_ms(500);
 
-	// debugWriteLine("Starting monitoring...");
+	debugWriteLine("Starting monitoring...");
 
 	// CDC_Device_SendString(&VirtualSerial_CDC_Interface,"Starting monitoring... @\r\n");
 
@@ -81,7 +83,7 @@ int main(void)
 	// initCurrentSense();
 
 	monitoring = 0;
-	initCurrentSense();
+
 
 	// _delay_ms
 	// findCurrentSensors();
@@ -96,12 +98,20 @@ int main(void)
         	data2 = (uint8_t) data1;
         	if (data2 == 'C')
         	{
+       			initCurrentSense();
+
         		debugWriteChar(data2);
         		monitoring = 1;
 
+        		currentSenseConfig();
+
         		debugWriteString("Config: ");
         		debugWriteBin8(CURRENT_CONFIG);
+        		debugWriteChar(' ');
+        		debugWriteDec16(CURRENT_SENSE_OCR);
         		debugNewLine();
+
+
 
 				printCurrent(CURRENT_USB);
 				printCurrent(CURRENT_MONITOR);
@@ -112,6 +122,23 @@ int main(void)
 
 				debugNewLine();
         	}
+        	else if(data2 == 'd')
+			{
+				debugWriteLine("disable all sensors");
+				for (uint8_t i = 1; i <= 6; i++)
+				{
+					writeRegister(getAddress(i), 0, 0x1B);
+				}
+
+			}
+        	else if(data2 == 'e')
+			{
+				debugWriteLine("enable all sensors");
+				for (uint8_t i = 1; i <= 6; i++)
+				{
+					writeRegister(getAddress(i), 0, 0);
+				}
+			}
         	else if(data2 == 'F')
         	{
 				debugWriteChar(data2);
@@ -143,6 +170,32 @@ int main(void)
         		debugWriteChar(data2);
         		printAccID();	
         	}
+        	else if(data2 == 's')
+        	{
+
+        		USB_Disable();   // turn off usb to prevent wake from sleep
+			    wdt_disable();  // turn off wdt before sleep
+			    set_sleep_mode(SLEEP_MODE_IDLE);
+			    sleep_enable();
+			    // attachInterrupt(0, pin3_ISR, LOW);
+			    cli();
+			// enable sleeping wake-up
+				DDRE &= ~_BV(PE6);
+				PORTE |= _BV(PE6);
+				EIMSK |= _BV(INT6);
+				EICRB |= (_BV(ISC60) | _BV(ISC61));
+				sei();
+			    sleep_cpu();    
+			    // CPU will wakeup here - pin3 ISR fires here
+			    
+			    // _delay_ms(4);
+
+			    sleep_disable();
+
+			    SetupHardware();   //turn usb back on
+			    // wdt_enable(WDTO_8S);  // enable the watchdog - was disabled in usb_init
+
+        	}
    //      	CDC_Device_SendByte(&VirtualSerial_CDC_Interface,(uint8_t)data1);
 			// CDC_Device_SendString(&VirtualSerial_CDC_Interface," @\r\n");
         }
@@ -173,10 +226,22 @@ void SetupHardware(void)
 
 	/* Hardware Initialization */
 	USB_Init();
+
+	// USB_Disable();
+	// USB_Init();
 	// MIDI_LED_ON();
 	// _delay_ms(150);
 	// MIDI_LED_OFF();
 
+	
+}
+
+// wake up!
+ISR(INT6_vect)
+{
+	EIMSK &= ~_BV(INT6);
+
+	debugWriteLine("wake up!");
 }
 
 void usbSendChar(char str)
