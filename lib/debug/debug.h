@@ -4,7 +4,7 @@
 // #include <main.h>
 #include <inttypes.h>
 #include <stdlib.h>
-#include <USBAPI.h>
+#include <usbInterface.h>
 
 void debugWriteString(char *str);
 void debugNewLine(void);

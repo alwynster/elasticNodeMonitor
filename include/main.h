@@ -26,10 +26,12 @@
 		#include <stdbool.h>
 		#include <string.h>
 
-		
+		#include <gpio.h>		
 		#include <Descriptors.h>
-		#include <USBAPI.h>
+		#include <usbInterface.h>
 
+		#include <softuart.h>
+		// #include <softSerial.h>
 		#include <current_sense.h>
 		#include <debug.h>
 		// #include <avr/sleep.h>

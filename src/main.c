@@ -24,7 +24,7 @@ uint8_t command, channel, data2;
 int status;
 
 uint8_t monitoring;
-
+char (*readInputCharacter)(void); 
 
 /** Main program entry point. This routine contains the overall program flow, including initial
  *  setup of all components and the main program loop.
@@ -58,15 +58,51 @@ int main(void)
 
 	// _delay_ms
 	// findCurrentSensors();
+	// initSoftSerial();
+	softuart_init();
+	softuart_turn_rx_on();
 
+	initMonitorPin();
+	uint8_t monitorPin = getMonitorPin();
 
 	/* Endless loop */
 	for(;;)
 	{
-        int16_t data1 = usbReceiveChar();
-        if(!(data1<0))
+		// check where to get input
+		if(monitorPin != getMonitorStatus())
+		{
+			monitorPin = getMonitorStatus();
+
+			if(monitorPin)
+			{
+				readInputCharacter = softuart_kbhit;
+				debugWriteString("using soft serial\n");
+
+			}	
+			else
+			{
+				readInputCharacter = usbReceiveChar;
+				debugWriteString("using USB\n");
+			}
+		}
+
+        int16_t data1 = readInputCharacter();
+        if((!monitorPin & !(data1<0)) | (monitorPin & (data1 != 0xff)))
         {
-        	data2 = (uint8_t) data1;
+			// fetch from queue if using serial
+			if(getMonitorStatus())
+			{
+				debugWriteLine("fetching from buffer");
+				data2 = getchar();
+				debugWriteLine("got from buffer");
+				debugWriteHex8(data2);
+				debugWriteChar(' ');
+				debugWriteChar(data2);
+				debugNewLine();
+
+			}
+			else
+        		data2 = (uint8_t) data1;
         	if (data2 == 'C')
         	{
        			initCurrentSense();

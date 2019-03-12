@@ -1,0 +1,20 @@
+{
+    "build": {
+      "core": "arduino",
+      "f_cpu": "8000000L",
+      "mcu": "atmega32u4",
+      "variant": "standard"
+    },
+    "frameworks": [
+      "arduino"
+    ],
+    "name": "Elastic Node v3 Monitoring (Atmega32u4 @ 3.3V)",
+    "upload": {
+      "maximum_ram_size": 2048,
+      "maximum_size": 32000,
+      "platform": "atmelavr",
+      "require_upload_port": true
+    },
+    "url": "www.uni-due.de",
+    "vendor": "ES"
+  }

@@ -2,6 +2,10 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"name": "elasticnodetest",
+			"path": "C:\\Users\\alwynster\\git\\elasticnodetest"
 		}
 	],
 	"settings": {
@@ -19,9 +23,10 @@
 			"usb.h": "c",
 			"current_measurement.h": "c",
 			"stdlib.h": "c",
-			"usbapi.h": "c",
 			"lufaconfig.h": "c",
-			"inttypes.h": "c"
+			"inttypes.h": "c",
+			"gpio.h": "c",
+			"softserial.h": "c"
 		},
 		"cSpell.enabled": false,
 		"terminal.integrated.env.windows": {
