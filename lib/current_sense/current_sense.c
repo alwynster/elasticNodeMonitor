@@ -286,9 +286,11 @@ void writeRegister(uint8_t address, uint8_t register_address, uint8_t value)
 // print the product id for testing
 void printAccID(void)
 {
+	debugWriteString("Writing reg");
 	writeRegister(0b0101000, 0x20, 7 + (2 << 4));
 	debugWriteString("Acc ID: ");
 
+	debugWriteString("Reading char ");
 	debugWriteHex8(readRegister(0x0f));
 	debugNewLine();
 }

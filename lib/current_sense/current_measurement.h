@@ -2,7 +2,7 @@
 #define CURRENT_MEASUREMENT_H
 
 #include <inttypes.h>
-#include <circular_buffer/circular_buffer.h>
+#include <circular_buffer.h>
 #include <avr/interrupt.h>
 
 typedef union currentMeasurementTmp {

@@ -1,0 +1,70 @@
+{
+    "!!! WARNING !!!": "PLEASE DO NOT MODIFY THIS FILE! USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags",
+    "configurations": [
+        {
+            "name": "Mac",
+            "macFrameworkPath": [],
+            "includePath": [
+                "/Users/alwynster/.platformio/packages/framework-arduinoavr/cores/arduino",
+                "/Users/alwynster/.platformio/packages/framework-arduinoavr/variants/micro",
+                "/Users/alwynster/git/elasticNodeMonitor/lib/Config",
+                "/Users/alwynster/git/elasticNodeMonitor/lib/LUFA",
+                "/Users/alwynster/git/elasticNodeMonitor/lib/circular_buffer",
+                "/Users/alwynster/git/elasticNodeMonitor/lib/current_sense",
+                "/Users/alwynster/git/elasticNodeMonitor/lib/debug",
+                "/Users/alwynster/git/elasticNodeMonitor/lib/i2cmaster",
+                "/Users/alwynster/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/EEPROM/src",
+                "/Users/alwynster/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/HID/src",
+                "/Users/alwynster/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SPI/src",
+                "/Users/alwynster/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SoftwareSerial/src",
+                "/Users/alwynster/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/Wire/src",
+                "/Users/alwynster/.platformio/packages/tool-unity",
+                "/Users/alwynster/git/elasticNodeMonitor/include",
+                "/Users/alwynster/git/elasticNodeMonitor/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": "${workspaceRoot}/.vscode/.browse.c_cpp.db",
+                "path": [
+                    "/Users/alwynster/.platformio/packages/framework-arduinoavr/cores/arduino",
+                    "/Users/alwynster/.platformio/packages/framework-arduinoavr/variants/micro",
+                    "/Users/alwynster/git/elasticNodeMonitor/lib/Config",
+                    "/Users/alwynster/git/elasticNodeMonitor/lib/LUFA",
+                    "/Users/alwynster/git/elasticNodeMonitor/lib/circular_buffer",
+                    "/Users/alwynster/git/elasticNodeMonitor/lib/current_sense",
+                    "/Users/alwynster/git/elasticNodeMonitor/lib/debug",
+                    "/Users/alwynster/git/elasticNodeMonitor/lib/i2cmaster",
+                    "/Users/alwynster/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/EEPROM/src",
+                    "/Users/alwynster/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/HID/src",
+                    "/Users/alwynster/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SPI/src",
+                    "/Users/alwynster/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SoftwareSerial/src",
+                    "/Users/alwynster/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/Wire/src",
+                    "/Users/alwynster/.platformio/packages/tool-unity",
+                    "/Users/alwynster/git/elasticNodeMonitor/include",
+                    "/Users/alwynster/git/elasticNodeMonitor/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=30605",
+                "ARDUINO_AVR_MICRO",
+                "F_USB=8000000UL",
+                "F_CPU=8000000UL",
+                "ARDUINO_ARCH_AVR",
+                "ARDUINO=10805",
+                "USB_VID=0x2341",
+                "USB_PID=0x0037",
+                "USB_PRODUCT=\"Arduino Micro\"",
+                "USB_MANUFACTURER=\"Arduino\"",
+                "__AVR_ATmega32U4__",
+                ""
+            ],
+            "intelliSenseMode": "clang-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "/Users/alwynster/.platformio/packages/toolchain-atmelavr/bin/avr-gcc -mmcu=atmega32u4"
+        }
+    ],
+    "version": 4
+}

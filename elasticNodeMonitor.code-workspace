@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"terminal.integrated.env.osx": {
+			"PATH": "/Users/alwynster/.platformio/penv/bin:/Users/alwynster/.platformio/penv:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/opt/X11/bin:/usr/local/CrossPack-AVR/bin:/Applications/Wireshark.app/Contents/MacOS",
+			"PLATFORMIO_CALLER": "vscode"
+		},
+		"files.associations": {
+			"descriptors.h": "c",
+			"main.h": "c",
+			"current_sense.h": "c",
+			"debug.h": "c"
+		},
+		"cSpell.enabled": false
+	}
+}

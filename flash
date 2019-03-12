@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#cmd="avrdude -F -c avrisp2 -p atmega32u4 -U flash:w:/home/bootloader/git/lufa/Bootloaders/DFU/BootloaderDFU.hex -Ulfuse:w:0xd2:m -Uhfuse:w:0xD9:m -Uefuse:w:0xc3:m"
+cmd="avrdude -c stk500v2 -p atmega32u4 -P /dev/tty.usbmodem* -U flash:w:elasticNodeMonitor.hex -Ulfuse:w:0xd2:m -Uhfuse:w:0xD9:m -Uefuse:w:0xc7:m"
+# cmd="avrdude -F -c avrisp2 -p atmega32u4 -U flash:w:BootloaderDFU.hex -Ulfuse:w:0xe2:m -Uhfuse:w:0xD9:m -Uefuse:w:0xc3:m -v"
+echo ${cmd}
+${cmd}

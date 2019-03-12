@@ -2,11 +2,11 @@
 #define CURRENT_SENSE_H
 
 // #include "lib/twi/twi.h"
-#include <i2cmaster/i2cmaster.h>
+#include <i2cmaster.h>
 // #include <softuart/softuart.h>
 // #include <uart/uart.h>
-#include <current_sense/current_measurement.h>
-#include <circular_buffer/circular_buffer.h>
+#include <current_measurement.h>
+#include <circular_buffer.h>
 //#include "lib/i2cmaster/i2cmaster.h"
 //#include "lib/softuart/softuart.h"
 //#include "lib/uart/uart.h"
