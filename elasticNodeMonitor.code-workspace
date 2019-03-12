@@ -13,8 +13,20 @@
 			"descriptors.h": "c",
 			"main.h": "c",
 			"current_sense.h": "c",
-			"debug.h": "c"
+			"debug.h": "c",
+			"serial.h": "c",
+			"circular_buffer.h": "c",
+			"usb.h": "c",
+			"current_measurement.h": "c",
+			"stdlib.h": "c",
+			"usbapi.h": "c",
+			"lufaconfig.h": "c",
+			"inttypes.h": "c"
 		},
-		"cSpell.enabled": false
+		"cSpell.enabled": false,
+		"terminal.integrated.env.windows": {
+			"PATH": "C:\\Users\\alwynster\\.platformio\\penv\\Scripts;C:\\Users\\alwynster\\.platformio\\penv;C:\\Python27\\;C:\\Python27\\Scripts;C:\\Program Files (x86)\\Razer Chroma SDK\\bin;C:\\Program Files\\Razer Chroma SDK\\bin;C:\\ProgramData\\DockerDesktop\\version-bin;C:\\Program Files\\Docker\\Docker\\Resources\\bin;C:\\Program Files (x86)\\Razer\\ChromaBroadcast\\bin;C:\\Program Files\\Razer\\ChromaBroadcast\\bin;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files\\PuTTY\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Git\\cmd;C:\\Program Files\\doxygen\\bin;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Users\\alwynster\\Downloads\\avr-gcc-8.2.0-x64-mingw\\bin;C:\\Users\\alwynster\\Downloads\\avr-gcc-8.2.0-x64-mingw\\avr\\bin;C:\\WINDOWS\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\alwynster\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\alwynster\\AppData\\Local\\Programs\\MiKTeX 2.9\\miktex\\bin\\x64\\;C:\\Program Files (x86)\\Atmel\\Flip 3.4.7\\bin;C:\\Python27;C:\\Python27\\Scripts;C:\\Users\\alwynster\\scoop\\shims;C:\\Users\\alwynster\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\alwynster\\AppData\\Local\\Programs\\MiKTeX 2.9\\miktex\\bin\\x64\\;C:\\Program Files (x86)\\Atmel\\Flip 3.4.7\\bin;C:\\Users\\alwynster\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Python27\\;C:\\Python27\\Scripts;C:\\Program Files (x86)\\Razer Chroma SDK\\bin;C:\\Program Files\\Razer Chroma SDK\\bin;C:\\ProgramData\\DockerDesktop\\version-bin;C:\\Program Files\\Docker\\Docker\\Resources\\bin;C:\\Program Files (x86)\\Razer\\ChromaBroadcast\\bin;C:\\Program Files\\Razer\\ChromaBroadcast\\bin;C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files\\PuTTY\\;C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\Git\\cmd;C:\\Program Files\\doxygen\\bin;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Users\\alwynster\\Downloads\\avr-gcc-8.2.0-x64-mingw\\bin;C:\\Users\\alwynster\\Downloads\\avr-gcc-8.2.0-x64-mingw\\avr\\bin;C:\\WINDOWS\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\alwynster\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\alwynster\\AppData\\Local\\Programs\\MiKTeX 2.9\\miktex\\bin\\x64\\;C:\\Program Files (x86)\\Atmel\\Flip 3.4.7\\bin;C:\\Python27;C:\\Python27\\Scripts;C:\\Users\\alwynster\\scoop\\shims;C:\\Users\\alwynster\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\alwynster\\AppData\\Local\\Programs\\MiKTeX 2.9\\miktex\\bin\\x64\\;C:\\Program Files (x86)\\Atmel\\Flip 3.4.7\\bin;C:\\Users\\alwynster\\AppData\\Local\\Programs\\Microsoft VS Code\\bin",
+			"PLATFORMIO_CALLER": "vscode"
+		}
 	}
 }

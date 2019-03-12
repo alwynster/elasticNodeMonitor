@@ -1,8 +1,5 @@
 #include "circular_buffer.h"
-// #include "../softuart/softuart.h"
-#include <avr/interrupt.h>
-#include <debug/debug.h>
-// #include <io/interrupts.h>
+
 
 void circBufInit(circularBuffer *c, uint16_t size)
 {

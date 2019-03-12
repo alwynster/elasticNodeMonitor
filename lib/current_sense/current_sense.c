@@ -1,12 +1,6 @@
 #include "current_sense.h"
-#include "../main.h"
-#include <avr/interrupt.h>	
+// #include "../main.h"
 
-// #include <io/interrupts.h>
-//#include "lib/fpga/fpga.h" // to know which version board it is
-// #include <fpga/fpga.h>
-#include <circular_buffer/circular_buffer.h>
-#include <debug/debug.h>
 
 void findCurrentSensors(void);
 uint8_t getChannel(uint8_t device);

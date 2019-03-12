@@ -15,3 +15,5 @@ build/*
 *.eep
 *.sym
 *.lss
+*.db*
+.pioenvs/

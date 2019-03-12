@@ -25,9 +25,10 @@
 		#include <util/delay.h>
 		#include <stdbool.h>
 		#include <string.h>
-		#include <LUFA/Drivers/Peripheral/Serial.h>
-		#include <LUFA/Drivers/USB/USB.h>
-		#include "Descriptors.h"
+
+		
+		#include <Descriptors.h>
+		#include <USBAPI.h>
 
 		#include <current_sense.h>
 		#include <debug.h>
@@ -37,15 +38,6 @@
 	/* Function Prototypes: */
 		void SetupHardware(void);
 
-		void EVENT_USB_Device_Connect(void);
-		void EVENT_USB_Device_Disconnect(void);
-		void EVENT_USB_Device_ConfigurationChanged(void);
-		void EVENT_USB_Device_ControlRequest(void);
-		void EVENT_CDC_Device_LineEncodingChanged(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo);
-
-void usbSendChar(char str);
-void usbSendString(char *str);
-
 		/* LEDs */
 		#define MIDI_LED_ON()      (PORTC |= (1<<6))
 		#define MIDI_LED_OFF()      (PORTC &= ~(1<<6))
@@ -53,7 +45,3 @@ void usbSendString(char *str);
 		#define USB_LED_OFF()       (PORTC &= ~(1<<7))
 
 		
-
-
-
-

@@ -13,6 +13,13 @@
 //#include "lib/current_sense/current_measurement.h"
 //#include "lib/circular_buffer/circular_buffer.h"
 #include <compat/twi.h>
+#include <avr/interrupt.h>	
+
+// #include <io/interrupts.h>
+//#include "lib/fpga/fpga.h" // to know which version board it is
+// #include <fpga/fpga.h>
+#include <circular_buffer.h>
+#include <debug.h>
 
 #define MEASUREMENT_BUFFER_SIZE 25
 // #if CURRENT_SENSE_OCR > 0xffff
@@ -113,6 +120,7 @@ void printAccID(void);
 void printCurrentProductId(uint8_t address);
 float currentSenseConvert(uint8_t device, uint16_t sense);
 void printCurrent(uint8_t device);
+void printAccelerometerValues(void);
 // extern union TWI_statusReg_f TWI_statusReg;
 
 // void printCurrentProductId(uint8_t address);

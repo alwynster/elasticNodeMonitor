@@ -1,7 +1,10 @@
 #ifndef _DEBUG_H
 #define _DEBUG_H
 
-#include <main.h>
+// #include <main.h>
+#include <inttypes.h>
+#include <stdlib.h>
+#include <USBAPI.h>
 
 void debugWriteString(char *str);
 void debugNewLine(void);
