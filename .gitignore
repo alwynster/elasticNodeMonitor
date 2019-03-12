@@ -1,4 +1,4 @@
-Debug/
+#Debug/
 build/
 .settings
 .DS_Store
@@ -9,7 +9,7 @@ build/
 *.elf
 *.hex
 build/*
-Debug/*
+#Debug/*
 *.map
 *.sublime-workspace
 *.eep
