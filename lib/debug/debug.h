@@ -5,6 +5,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <usbInterface.h>
+#include <softuart.h>
 
 void debugWriteString(char *str);
 void debugNewLine(void);
@@ -23,5 +24,7 @@ void debugWriteBin32(uint32_t num);
 void debugWriteFloat(float num);
 void debugWriteBin4(uint8_t num);
 void debugWriteDec32(uint32_t num);
+void debugSwitchUSB(void);
+void debugSwitchSoftUart(void);
 
 #endif

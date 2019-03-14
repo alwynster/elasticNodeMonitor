@@ -24,7 +24,13 @@ uint8_t command, channel, data2;
 int status;
 
 uint8_t monitoring;
-char (*readInputCharacter)(void); 
+int16_t (*readInputCharacter)(void); 
+int16_t receiveSoftUart(void);
+int16_t receiveUSB(void);
+
+bool softUartModeTx = false;
+void softUartTx(void);
+void softUartRx(void);
 
 /** Main program entry point. This routine contains the overall program flow, including initial
  *  setup of all components and the main program loop.
@@ -40,7 +46,7 @@ int main(void)
 	wdt_reset();
 	GlobalInterruptEnable();
 
-
+	debugSwitchUSB();
 	// _delay_ms(500);
 
 	debugWriteLine("Starting monitoring...");
@@ -59,64 +65,109 @@ int main(void)
 	// _delay_ms
 	// findCurrentSensors();
 	// initSoftSerial();
-	softuart_init();
-	softuart_turn_rx_on();
-
-	initMonitorPin();
+	
+	// initMonitorPin();
 	uint8_t monitorPin = getMonitorPin();
+	if(monitorPin)
+	{
+		readInputCharacter = receiveSoftUart;
+		debugWriteString("using soft serial\n");
+		softuart_init();
+		softUartRx();
+	}	
+	else
+	{
+		readInputCharacter = receiveUSB;
+		debugWriteString("using USB\n");
+	}
 
 	/* Endless loop */
 	for(;;)
 	{
-		// check where to get input
-		if(monitorPin != getMonitorStatus())
+		// // check where to get input
+		// if(monitorPin != getMonitorStatus())
+		// {
+		// 	monitorPin = getMonitorStatus();
+
+		// 	if(monitorPin)
+		// 	{
+		// 		// readInputCharacter = softuart_kbhit;
+		// 		debugWriteString("using soft serial\n");
+
+		// 	}	
+		// 	else
+		// 	{
+		// 		readInputCharacter = usbReceiveChar;
+		// 		debugWriteString("using USB\n");
+		// 	}
+		// }
+
+		// // check if device FIFO is empty
+		// if (softUartModeTx)
+		// {
+		// 	// switch from tx to rx when buffer empty
+		// 	if(Endpoint_BytesInEndpoint() == 0)
+		// 	{
+		// 		softUartRx();
+		// 		debugWriteLine("switching back to usb sending");
+		// 	}
+		// }
+		
+
+		// debugWriteString("reading");
+		int16_t data1 = readInputCharacter();
+
+		
+		// if((!monitorPin & !(data1<0)) | (monitorPin & (data1 != 0xff)))
+		if(data1 != -1)
 		{
-			monitorPin = getMonitorStatus();
+			// debugWriteLine("received: ");
+			// debugWriteHex16(data1);
+			// debugWriteChar(' ');
+			// debugWriteChar((char) data1);
+			// debugNewLine();
+			// while(Endpoint_BytesInEndpoint() > 0);
+			// {
 
-			if(monitorPin)
-			{
-				readInputCharacter = softuart_kbhit;
-				debugWriteString("using soft serial\n");
+			// }
 
-			}	
-			else
+			if (getMonitorPin())
 			{
-				readInputCharacter = usbReceiveChar;
-				debugWriteString("using USB\n");
+				// debugWriteLine("switching to tx");
+
+				softUartTx();
+				_delay_ms(5);
 			}
-		}
-
-        int16_t data1 = readInputCharacter();
-        if((!monitorPin & !(data1<0)) | (monitorPin & (data1 != 0xff)))
-        {
 			// fetch from queue if using serial
-			if(getMonitorStatus())
+			// if(!getMonitorStatus())
+			// {
+			// 	// change to tx
+			// 	softUartTx();
+
+			// 	debugWriteLine("fetching from buffer");
+			// 	data2 = getchar();
+			// 	debugWriteLine("got from buffer");
+			// 	debugWriteHex8(data2);
+			// 	debugWriteChar(' ');
+			// 	debugWriteChar(data2);
+			// 	debugNewLine();
+			// }
+			// else
+			data2 = (uint8_t) data1;
+			if (data2 == 'C')
 			{
-				debugWriteLine("fetching from buffer");
-				data2 = getchar();
-				debugWriteLine("got from buffer");
-				debugWriteHex8(data2);
-				debugWriteChar(' ');
+				initCurrentSense();
+
 				debugWriteChar(data2);
+				monitoring = 1;
+
+				currentSenseConfig();
+
+				debugWriteString("Config: ");
+				debugWriteBin8(CURRENT_CONFIG);
+				debugWriteChar(' ');
+				debugWriteDec16(CURRENT_SENSE_OCR);
 				debugNewLine();
-
-			}
-			else
-        		data2 = (uint8_t) data1;
-        	if (data2 == 'C')
-        	{
-       			initCurrentSense();
-
-        		debugWriteChar(data2);
-        		monitoring = 1;
-
-        		currentSenseConfig();
-
-        		debugWriteString("Config: ");
-        		debugWriteBin8(CURRENT_CONFIG);
-        		debugWriteChar(' ');
-        		debugWriteDec16(CURRENT_SENSE_OCR);
-        		debugNewLine();
 
 
 
@@ -128,19 +179,19 @@ int main(void)
 				printCurrent(CURRENT_FPGA_VCCAUX);
 
 				debugNewLine();
-        	}
-        	else if(data2=='l')
-        	{
-        		debugWriteChar(data2);
-        		DDRD |= 3;
-        		PORTC |= _BV(6) | _BV(7);
-        		PORTD |= 3;
+			}
+			else if(data2=='l')
+			{
+				debugWriteChar(data2);
+				DDRD |= 3;
+				PORTC |= _BV(6) | _BV(7);
+				PORTD |= 3;
 				_delay_ms(100);
 				PORTC &= ~(_BV(6) | _BV(7));
 				PORTD &= ~(3);
 				_delay_ms(100);	
-        	}
-        	else if(data2 == 'd')
+			}
+			else if(data2 == 'd')
 			{
 				debugWriteLine("disable all sensors");
 				for (uint8_t i = 1; i <= 6; i++)
@@ -149,7 +200,7 @@ int main(void)
 				}
 
 			}
-        	else if(data2 == 'e')
+			else if(data2 == 'e')
 			{
 				debugWriteLine("enable all sensors");
 				for (uint8_t i = 1; i <= 6; i++)
@@ -157,43 +208,60 @@ int main(void)
 					writeRegister(getAddress(i), 0, 0);
 				}
 			}
-        	else if(data2 == 'F')
-        	{
+			else if(data2 == 'F')
+			{
 				debugWriteChar(data2);
-       			findCurrentSensors();
-        	}
-        	else if(data2 == 'M')
-        	{
+				findCurrentSensors();
+			}
+			else if(data2 == 'M')
+			{
 				debugWriteChar(data2);
 				currentSenseClearMeasurements();
 				currentSenseBegin();
-        	} 
-        	else if(data2 == 'm')
-        	{
+			} 
+			else if(data2 == 'm')
+			{
 				debugWriteChar(data2);
 				currentSenseEnd();
-        	}
-        	else if(data2 == 'f')
-        	{
-        		debugWriteChar(data2);
-        		printAllCurrentMeasurementsFloat();
-        	}
-        	else if(data2 == 'a')
-        	{
-        		debugWriteChar(data2);
-        		printAccelerometerValues();
-        	}
-        	else if(data2 == 'W')
-        	{
-        		i2c_init();
-				i2c_enable();
-        		debugWriteChar(data2);
-        		printAccID();	
-        	}
-   //      	else if(data2 == 's')
-   //      	{
+			}
+			else if(data2 == 'f')
+			{
+				debugWriteChar(data2);
+				debugWriteChar(0xA);
+				_delay_ms(1);
+				debugWriteChar(0xB);
+				// printAllCurrentMeasurementsFloat();
 
-   //      		USB_Disable();   // turn off usb to prevent wake from sleep
+				while(softuart_transmit_busy())
+				{
+					_delay_ms(1);
+				}
+
+				softUartRx();
+				debugWriteLine("switching back to usb sending");
+
+			}
+			else if(data2 == 'a')
+			{
+				debugWriteChar(data2);
+				printAccelerometerValues();
+			}
+			// else if(data2 == 'U')
+			// {
+			// 	debugWriteChar(data2);
+
+			// }
+			else if(data2 == 'W')
+			{
+				i2c_init();
+				i2c_enable();
+				debugWriteChar(data2);
+				printAccID();	
+			}
+//      	else if(data2 == 's')
+//      	{
+
+//      		USB_Disable();   // turn off usb to prevent wake from sleep
 			//     wdt_disable();  // turn off wdt before sleep
 			//     set_sleep_mode(SLEEP_MODE_IDLE);
 			//     sleep_enable();
@@ -207,7 +275,7 @@ int main(void)
 			// 	sei();
 			//     sleep_cpu();    
 			//     // CPU will wakeup here - pin3 ISR fires here
-			    
+				
 			//     // _delay_ms(4);
 
 			//     sleep_disable();
@@ -215,11 +283,11 @@ int main(void)
 			//     SetupHardware();   //turn usb back on
 			//     // wdt_enable(WDTO_8S);  // enable the watchdog - was disabled in usb_init
 
-   //      	}
-   //      	CDC_Device_SendByte(&VirtualSerial_CDC_Interface,(uint8_t)data1);
+//      	}
+//      	CDC_Device_SendByte(&VirtualSerial_CDC_Interface,(uint8_t)data1);
 			// CDC_Device_SendString(&VirtualSerial_CDC_Interface," @\r\n");
-        }
-
+		}
+		
 		usbTask();	
 	}
 	
@@ -262,3 +330,44 @@ void SetupHardware(void)
 
 // 	debugWriteLine("wake up!");
 // }
+
+// change direction of line for half duplex
+void softUartTx(void)
+{
+	softUartModeTx = true;
+	softuart_turn_rx_off();
+	SOFTUART_TXDDR |=  ( 1 << SOFTUART_TXBIT );
+	SOFTUART_TXPORT |= ( 1 << SOFTUART_TXBIT );
+	debugSwitchSoftUart();
+}
+
+void softUartRx(void)
+{
+	softUartModeTx = false;
+	SOFTUART_RXDDR &= ~( 1 << SOFTUART_RXBIT );
+	softuart_turn_rx_on();
+	debugSwitchUSB();
+}
+
+int16_t receiveSoftUart(void)
+{
+	if (!softuart_kbhit())
+		return -1;
+	else
+	{
+		int16_t received = (int16_t) softuart_getchar();
+		if (received)
+			return received;
+		else
+			return -1;
+	}
+}
+
+int16_t receiveUSB(void)
+{
+	int16_t dataIn = usbReceiveChar();
+	if (dataIn == 0xff)
+		return -1;
+	else
+		return (int16_t) dataIn;
+}

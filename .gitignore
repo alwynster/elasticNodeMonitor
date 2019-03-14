@@ -1,5 +1,6 @@
 #Debug/
 build/
+*.db
 .settings
 .DS_Store
 *.bit
@@ -17,3 +18,4 @@ build/*
 *.lss
 *.db*
 .pioenvs/
+.vscode/

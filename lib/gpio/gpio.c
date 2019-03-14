@@ -16,8 +16,9 @@ void initMonitorPin(void)
 
 uint8_t getMonitorPin(void)
 {
-    uint8_t result = MONITOR_PIN | _BV(MONITOR_P);
-    return result != 0;
+    return 1;
+    // uint8_t result = MONITOR_PIN | _BV(MONITOR_P);
+    // return result != 0;
 }
 
 uint8_t getMonitorStatus(void)

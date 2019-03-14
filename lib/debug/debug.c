@@ -1,21 +1,34 @@
 #include "debug.h"
 
+void (*writeCharMock) (char) = usbSendChar;
 void debugWriteBin(uint32_t num, uint8_t length);
+
+void debugSwitchUSB(void)
+{
+	writeCharMock = usbSendChar;
+}
+
+void debugSwitchSoftUart(void)
+{
+	writeCharMock = softuart_putchar;
+}
 
 void debugWriteLine(char *str)
 {
-	usbSendString(str);
-	usbSendString(" \r\n");
+	debugWriteString(str);
+	debugWriteString(" \r\n");
 }
 
 void debugWriteString(char *str)
 {
-	usbSendString(str);
+	while (*str)
+		debugWriteChar(*str++);
+	// usbSendString(str);
 }
 
 void debugNewLine(void)
 {
-	usbSendString(" \r\n");
+	debugWriteString(" \r\n");
 
 	// CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
 	// USB_USBTask();
@@ -26,12 +39,12 @@ void debugWriteStringLength(char *s, uint8_t length)
 	uint8_t i;
 	for (i = 0; i < length; i++)
 	// while (*s)
-		usbSendChar(*s++);
+		debugWriteChar(*s++);
 }
 
 void debugWriteChar(uint8_t c)
 {
-	usbSendChar(c);
+	writeCharMock(c);
 }
 
 void debugWriteHex32(uint32_t num)

@@ -3,7 +3,7 @@
     #define F_CPU 3686400UL
 #endif
 
-#define SOFTUART_BAUD_RATE      57600
+#define SOFTUART_BAUD_RATE      9600
 
 #if defined (__AVR_ATtiny25__) || defined (__AVR_ATtiny45__) || defined (__AVR_ATtiny85__)
     #define SOFTUART_RXPIN   PINB
@@ -79,13 +79,13 @@
     #endif
 #elif defined (__AVR_ATmega32U4__)
 
-    #define SOFTUART_RXPIN   PINB
-    #define SOFTUART_RXDDR   DDRB
-    #define SOFTUART_RXBIT   PB1
+    #define SOFTUART_RXPIN   PINE
+    #define SOFTUART_RXDDR   DDRE
+    #define SOFTUART_RXBIT   PE2
 
-    #define SOFTUART_TXPORT  PORTB
-    #define SOFTUART_TXDDR   DDRB
-    #define SOFTUART_TXBIT   PB3
+    #define SOFTUART_TXPORT  PORTE
+    #define SOFTUART_TXDDR   DDRE
+    #define SOFTUART_TXBIT   PE2
 
     #define SOFTUART_T_COMP_LABEL      TIMER0_COMPA_vect
     #define SOFTUART_T_COMP_REG        OCR0A

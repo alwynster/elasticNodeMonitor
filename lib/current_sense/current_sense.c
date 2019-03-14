@@ -850,7 +850,7 @@ void printCurrentMeasurement(currentMeasurement c)
 	debugNewLine();
 }
 
-void printAllCurrentMeasurementsFloat()
+void printAllCurrentMeasurementsFloat(void)
 {
 	currentMeasurementFloat measurementFloat;
 	uint8_t responses;
