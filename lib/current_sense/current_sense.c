@@ -247,7 +247,7 @@ void writeRegister(uint8_t address, uint8_t register_address, uint8_t value)
 
 	uint8_t address8 = address << 1;
 	uint8_t result;
-	uint8_t reg;
+	// uint8_t reg;
 
 	result = i2c_start(address8);
 	if (result)
@@ -679,6 +679,19 @@ uint16_t readCurrentSense(uint8_t address, uint8_t channel)
 		return sense;
 }
 
+currentMeasurementFloat fetchCurrentMeasurementFloat(void)
+{
+	currentMeasurementFloat output;
+	output.breakdown.wireless = fetchCurrent(CURRENT_WIRELESS);
+	output.breakdown.usb = fetchCurrent(CURRENT_USB);
+	output.breakdown.monitor = fetchCurrent(CURRENT_MONITOR);
+	output.breakdown.mcu = fetchCurrent(CURRENT_MCU);
+	output.breakdown.vccaux = fetchCurrent(CURRENT_FPGA_VCCAUX);
+	output.breakdown.vccint = fetchCurrent(CURRENT_FPGA_VCCINT);
+
+	return output;
+}
+
 void printCurrent(uint8_t device)
 {
 	debugWriteString("Current ");
@@ -769,13 +782,13 @@ void findCurrentSensors()
 	cli();
 
 	debugWriteString("Finding current sensors...\n");
-	uint8_t address_a = 0b0101000, address_b = 0b10010000; // 0b01010000
+	// uint8_t address_a = 0b0101000, address_b = 0b10010000; // 0b01010000
 	uint8_t address = 0b01010001;
 	// uint8_t read = 0x1;
-	uint8_t i = 0;
+	// uint8_t i = 0;
 	// uint8_t reg = 0xFD;
 	// char msg[10];
-	uint8_t response_a, response_b;
+	uint8_t response_a; //, response_b;
 	// uint8_t state;
 
 	debugNewLine();

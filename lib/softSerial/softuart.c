@@ -329,6 +329,15 @@ unsigned char softuart_transmit_busy( void )
 	return ( flag_tx_busy == SU_TRUE ) ? 1 : 0;
 }
 
+void softuart_putchar_blocking( const char ch)
+{
+	softuart_putchar(ch);
+	while(softuart_transmit_busy())
+	{
+		_delay_ms(1);
+	}
+}
+
 void softuart_putchar( const char ch )
 {
 	while ( flag_tx_busy == SU_TRUE ) {

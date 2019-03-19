@@ -32,7 +32,6 @@ typedef union currentMeasurementFloatTmp {
 uint8_t pushCurrentMeasurement(circularBuffer *buf, currentMeasurement *measurement);
 uint8_t popCurrentMeasurement(circularBuffer *buf, currentMeasurementFloat *measurement);
 void currentMeasurementConvert(currentMeasurement *measurement, currentMeasurementFloat *converted);
-void printCurrentMeasurement(currentMeasurement c);
-void printAllCurrentMeasurementsFloat(void);
+
 
 #endif

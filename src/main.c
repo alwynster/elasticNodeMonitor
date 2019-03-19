@@ -130,6 +130,7 @@ int main(void)
 			// {
 
 			// }
+			// _delay_ms(10);
 
 			if (getMonitorPin())
 			{
@@ -168,8 +169,6 @@ int main(void)
 				debugWriteChar(' ');
 				debugWriteDec16(CURRENT_SENSE_OCR);
 				debugNewLine();
-
-
 
 				printCurrent(CURRENT_USB);
 				printCurrent(CURRENT_MONITOR);
@@ -227,15 +226,15 @@ int main(void)
 			else if(data2 == 'f')
 			{
 				debugWriteChar(data2);
-				debugWriteChar(0xA);
-				_delay_ms(1);
-				debugWriteChar(0xB);
-				// printAllCurrentMeasurementsFloat();
 
-				while(softuart_transmit_busy())
-				{
-					_delay_ms(1);
-				}
+				currentMeasurementFloat current = fetchCurrentMeasurementFloat();
+				// for(uint8_t *ptr = (uint8_t *)current.measurements; ptr < (uint8_t *)current.measurements + (sizeof(uint8_t) * sizeof(currentMeasurementFloat)); ptr++)
+				debugWriteStringLength((char *) current.measurements, sizeof(currentMeasurementFloat));
+
+				// while(softuart_transmit_busy())
+				// {
+				// 	_delay_ms(1);
+				// }
 
 				softUartRx();
 				debugWriteLine("switching back to usb sending");

@@ -128,8 +128,12 @@ uint16_t readCurrentSense(uint8_t address, uint8_t channel);
 uint16_t readCurrentSenseBlocking(uint8_t address, uint8_t channel);
 // float readCurrent(uint8_t address, uint8_t channel);
 void printCurrentSense(uint8_t address, uint8_t channel);
+void printCurrentMeasurement(currentMeasurement c);
+void printCurrentMeasurementFloat(currentMeasurementFloat c);
+void printAllCurrentMeasurementsFloat(void);
 
 float fetchCurrent(uint8_t device);
+currentMeasurementFloat fetchCurrentMeasurementFloat(void);
 
 void currentSenseStartAll(void);
 

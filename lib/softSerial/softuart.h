@@ -3,6 +3,8 @@
     #define F_CPU 3686400UL
 #endif
 
+#include <util/delay.h>
+
 #define SOFTUART_BAUD_RATE      9600
 
 #if defined (__AVR_ATtiny25__) || defined (__AVR_ATtiny45__) || defined (__AVR_ATtiny85__)
@@ -137,6 +139,9 @@ char softuart_getchar( void );
 
 // To check if transmitter is busy
 unsigned char softuart_transmit_busy( void );
+
+// Writes a character to the serial port and waits for it to finish
+void softuart_putchar_blocking( const char ch);
 
 // Writes a character to the serial port.
 void softuart_putchar( const char );

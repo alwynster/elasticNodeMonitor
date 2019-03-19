@@ -10,7 +10,7 @@ void debugSwitchUSB(void)
 
 void debugSwitchSoftUart(void)
 {
-	writeCharMock = softuart_putchar;
+	writeCharMock = softuart_putchar_blocking;
 }
 
 void debugWriteLine(char *str)
