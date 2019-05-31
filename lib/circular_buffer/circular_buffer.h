@@ -6,9 +6,6 @@
 #include <stdlib.h>
 #include <avr/interrupt.h>
 
-#include <debug.h>
-
-
 typedef struct {
     uint8_t *buffer;
     uint8_t *head;
@@ -24,16 +21,8 @@ void circBufFree(circularBuffer *c);
 uint16_t circBufSpace(circularBuffer *c);
 uint16_t circBufCount(circularBuffer *c);
 uint16_t circBufCountObjects(circularBuffer *c, uint16_t size);
-// uint8_t circBufCountFloat(circBuf_t *c);
-// uint8_t circBufCount16(circBuf_t *c);
 
 uint8_t circBufPush(circularBuffer *c, uint8_t data);
 uint8_t circBufPop(circularBuffer *c, uint8_t *data);
-// int circBufPushFloat(circBuf_t *c, float data);
-// int circBufPopFloat(circBuf_t *c, float *data);
-// int circBufPush16(circBuf_t *c, uint16_t data);
-// int circBufPop16(circBuf_t *c, uint16_t *data);
-// int circBufPushCurrentMeasurement(circBuf_t *c, currentMeasurement data);
-// int circBufPopCurrentMeasurement(circBuf_t *c, currentMeasurement *data);
-// uint8_t circBufCountCurrentMeasurement(circBuf_t *c);
+
 #endif

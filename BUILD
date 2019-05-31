@@ -56,6 +56,7 @@ default_embedded_binary(
 	linkopts = commonCopts + LUFA_COPTS + ["-Wl,-u,vfprintf -lprintf_flt -lm"],
 	deps = [
 		"//lib:DebugLib",
+        "//lib:CurrentSenseLib"
 	],
     uploader = "//:stk_upload_script"
 )

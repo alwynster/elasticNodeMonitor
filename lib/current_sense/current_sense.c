@@ -1,6 +1,11 @@
-#include "current_sense.h"
-// #include "../main.h"
 
+#include <stdint.h>
+#include <util/twi.h>
+#include "lib/circular_buffer/circular_buffer.h"
+#include "lib/current_sense/current_measurement.h"
+#include "lib/i2cmaster/i2cmaster.h"
+#include "lib/current_sense/current_sense.h"
+#include "lib/debug/debug.h"
 
 void findCurrentSensors(void);
 uint8_t getChannel(uint8_t device);

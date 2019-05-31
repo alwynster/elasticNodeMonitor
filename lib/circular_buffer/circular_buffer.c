@@ -1,4 +1,5 @@
 #include "circular_buffer.h"
+#include "lib/debug/debug.h"
 
 
 void circBufInit(circularBuffer *c, uint16_t size)

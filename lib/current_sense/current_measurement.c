@@ -1,4 +1,6 @@
-#include "current_measurement.h"
+
+#include "lib/circular_buffer/circular_buffer.h"
+#include "lib/current_sense/current_measurement.h"
 
 uint8_t popCurrentMeasurement(circularBuffer *buf, currentMeasurementFloat *measurement)
 {

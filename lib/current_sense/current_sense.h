@@ -1,25 +1,8 @@
 #ifndef CURRENT_SENSE_H
 #define CURRENT_SENSE_H
 
-// #include "lib/twi/twi.h"
-#include <i2cmaster.h>
-// #include <softuart/softuart.h>
-// #include <uart/uart.h>
-#include <current_measurement.h>
-#include <circular_buffer.h>
-//#include "lib/i2cmaster/i2cmaster.h"
-//#include "lib/softuart/softuart.h"
-//#include "lib/uart/uart.h"
-//#include "lib/current_sense/current_measurement.h"
-//#include "lib/circular_buffer/circular_buffer.h"
-#include <compat/twi.h>
-#include <avr/interrupt.h>	
 
-// #include <io/interrupts.h>
-//#include "lib/fpga/fpga.h" // to know which version board it is
-// #include <fpga/fpga.h>
-#include <circular_buffer.h>
-#include <debug.h>
+#include "lib/current_sense/current_measurement.h"
 
 #define MEASUREMENT_BUFFER_SIZE 25
 // #if CURRENT_SENSE_OCR > 0xffff
