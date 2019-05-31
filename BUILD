@@ -60,3 +60,38 @@ default_embedded_binary(
 	],
     uploader = "//:stk_upload_script"
 )
+
+
+# Uploading stuff
+load("//:vars.bzl", "defineProgrammer")
+
+defineProgrammer(
+  name = "programmerPort",
+  port = "/dev/tty.usbmodem142101"
+)
+
+STK_UPLOAD_SCRIPT_TEMPLATE = """
+{sudo}avrdude -v -V -p $$1 -c stk500v2 -P $(PROGPORT) -U flash:w:$$2 -e;
+"""
+
+genrule(
+    name = "stk_upload_script",
+    outs = ["stk_upload_script.sh"],
+    cmd = "echo '" +
+#    select({
+#        "@AvrToolchain//host_config:dfu_needs_sudo": UPLOAD_SCRIPT_TEMPLATE.format(
+#            export = "",
+#            sudo = "sudo ",
+#        ),
+#        "@AvrToolchain//host_config:dfu_needs_askpass": UPLOAD_SCRIPT_TEMPLATE.format(
+#            export = "export SUDO_ASKPASS=$(ASKPASS)",
+#            sudo = "sudo ",
+#        ),
+#        "//conditions:default":
+        STK_UPLOAD_SCRIPT_TEMPLATE.format(
+            sudo = "",
+        )
+#    })
+     + "' > $@",
+    toolchains = [":programmerPort"]
+)
